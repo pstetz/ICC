@@ -13,7 +13,17 @@ def finv(p, v1, v2):
 def fcdf(p, v1, v2):
     return scipy.stats.f.cdf(p, v1, v2)
 
-def icc(df, icc_type="C-k", alpha=0.05, r0=0):
+def icc(df, icc_type="c-k", alpha=0.05, r0=0):
+    """
+    Parameters
+    ----------
+    df : Pandas Dataframe
+        input Dataframe for ICC
+    Returns
+    -------
+    ICC statistics calculated from the dataframe
+    """
+    icc_type = icc_type.lower()
     n, k = df.shape
     std = df.std()
 
@@ -27,7 +37,12 @@ def icc(df, icc_type="C-k", alpha=0.05, r0=0):
         (MSR * (n - 1)) -
         MSC * (k -1)
     ) / ((n - 1) * (k - 1))
-    return case_c_k(MSR, MSE, MSC, MSW, alpha, r0, n, k)
+    if icc_type == "c-k":
+        return case_c_k(MSR, MSE, MSC, MSW, alpha, r0, n, k)
+    elif icc_type == "c-1":
+        return case_c_1(MSR, MSE, MSC, MSW, alpha, r0, n, k)
+    else:
+        raise Exception(f"Implementation of {icc_type} not available")
 
 def case_c_k(MSR, MSE, MSC, MSW, alpha, r0, n, k):
     ret  = dict()
